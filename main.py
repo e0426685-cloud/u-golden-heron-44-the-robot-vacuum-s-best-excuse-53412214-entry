@@ -36,6 +36,11 @@ def main():
     with open(path, "w", encoding="utf-8") as f:
         f.write(ENTRY)
     os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+    # Read the file back and prove the write landed intact: a partial or
+    # mangled write must fail loudly here, never ship a broken entry.
+    with open(path, "r", encoding="utf-8") as f:
+        written = f.read()
+    assert written == ENTRY, "entry.txt does not match the validated entry"
     print(f"wrote {len(ENTRY)} chars to {path}")
 
 
